@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>La Ville CSS — display: block / inline / inline-block</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #F0EDE8;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+      color: #1a1a1a;
+    }
+
+    .container { max-width: 820px; margin: 0 auto; }
+
+    header { text-align: center; margin-bottom: 2rem; }
+    header h1 {
+      font-size: 2rem; font-weight: 700; letter-spacing: -0.03em;
+      color: #1a1a1a; margin-bottom: 6px;
+    }
+    header h1 span { color: #534AB7; }
+    header p { font-size: 14px; color: #666; }
+
+    /* LEGEND */
+    .legend {
+      display: flex; gap: 12px; flex-wrap: wrap;
+      justify-content: center; margin-bottom: 1.5rem;
+    }
+    .leg { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #444; background: #fff; border-radius: 8px; padding: 6px 14px; border: 1px solid #e0ddd8; }
+    .leg-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+
+    /* CONTROLS */
+    .controls { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 1.5rem; }
+    .btn {
+      padding: 10px 20px; border-radius: 10px; font-size: 14px; font-weight: 600;
+      border: none; cursor: pointer; transition: transform .1s, box-shadow .1s;
+      letter-spacing: -0.01em;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+    .btn:active { transform: scale(0.97); }
+    .btn-block  { background: #534AB7; color: #fff; }
+    .btn-inline { background: #0F6E56; color: #fff; }
+    .btn-ib     { background: #993C1D; color: #fff; }
+    .btn-reset  { background: #e8e5e0; color: #666; font-weight: 500; }
+
+    /* STREET */
+    .street-card {
+      background: #fff; border-radius: 16px;
+      border: 1px solid #e0ddd8;
+      overflow: hidden; margin-bottom: 1.5rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+
+    .sky {
+      height: 70px;
+      background: linear-gradient(180deg, #B8D8F8 0%, #DFF0FB 100%);
+      position: relative; overflow: hidden;
+    }
+    .cloud {
+      position: absolute; background: rgba(255,255,255,0.85);
+      border-radius: 50px; height: 18px;
+    }
+    .cloud::before, .cloud::after {
+      content: ''; position: absolute; background: rgba(255,255,255,0.85); border-radius: 50%;
+    }
+    .cloud-1 { width: 70px; top: 18px; left: 60px; }
+    .cloud-1::before { width: 30px; height: 25px; top: -12px; left: 10px; }
+    .cloud-1::after { width: 20px; height: 18px; top: -8px; left: 36px; }
+    .cloud-2 { width: 50px; top: 24px; left: 52%; opacity: 0.7; }
+    .cloud-2::before { width: 22px; height: 20px; top: -10px; left: 8px; }
+    .sun {
+      position: absolute; top: 12px; right: 24px;
+      width: 28px; height: 28px; border-radius: 50%;
+      background: #F9CF67;
+      box-shadow: 0 0 0 6px rgba(249,207,103,0.35), 0 0 0 12px rgba(249,207,103,0.15);
+    }
+
+    .rue {
+      min-height: 100px; padding: 12px 14px 0;
+      background: #EAE6E0;
+      line-height: 0;
+      word-spacing: 0;
+      position: relative;
+    }
+    .empty-msg {
+      font-size: 14px; color: #999; text-align: center;
+      padding: 28px 0; line-height: 1.7; display: block;
+    }
+
+    .trottoir { height: 10px; background: #C8C0B0; }
+    .sol      { height: 20px; background: #7A6548; }
+    .sol-line { height: 4px; background: repeating-linear-gradient(90deg, #F9D748 0, #F9D748 30px, #7A6548 30px, #7A6548 60px); }
+
+    /* BUILDINGS */
+    .building {
+      border-radius: 5px 5px 0 0; cursor: pointer;
+      position: relative; transition: transform .15s, filter .1s;
+      text-align: center; padding-top: 6px; vertical-align: bottom;
+      font-size: 0;
+    }
+    .building:hover { transform: translateY(-4px); filter: brightness(1.06); }
+
+    .b-block {
+      display: block; width: 100%;
+      margin-bottom: 3px;
+    }
+    .b-inline {
+      display: inline-block; vertical-align: bottom;
+      margin-right: 3px;
+    }
+    .b-ib {
+      display: inline-block; vertical-align: bottom;
+      margin-right: 3px;
+    }
+
+    .win-row { display: flex; justify-content: center; gap: 4px; margin-bottom: 4px; line-height: 0; }
+    .win { width: 8px; height: 9px; border-radius: 1px; background: rgba(255,255,255,0.55); display: inline-block; }
+    .win.lit { background: rgba(255,240,150,0.85); }
+
+    .bld-label {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.04em;
+      text-transform: uppercase; opacity: 0.85; display: block;
+      padding: 2px 4px; line-height: 1.3;
+    }
+
+    /* INFO */
+    .info-panel {
+      background: #fff; border-radius: 12px; border: 1px solid #e0ddd8;
+      padding: 14px 18px; margin-bottom: 1rem; font-size: 14px; line-height: 1.7;
+      min-height: 72px; transition: all .2s;
+    }
+    .info-panel strong { font-weight: 700; }
+    .info-panel em { font-style: normal; text-decoration: underline; text-decoration-style: dotted; }
+    .info-panel.type-block  { border-left: 4px solid #534AB7; }
+    .info-panel.type-inline { border-left: 4px solid #0F6E56; }
+    .info-panel.type-ib     { border-left: 4px solid #993C1D; }
+
+    .code-rule {
+      background: #1E1B2E; color: #C8C3F4;
+      border-radius: 10px; padding: 12px 16px;
+      font-family: 'Courier New', monospace; font-size: 13px;
+      line-height: 1.8; display: none;
+    }
+    .code-rule.show { display: block; }
+    .kw  { color: #9D8FF0; }
+    .val { color: #63D4A8; }
+    .cmt { color: #636080; }
+
+    /* SCORE */
+    .scoreboard {
+      display: flex; gap: 10px; justify-content: center;
+      margin-bottom: 1.5rem; flex-wrap: wrap;
+    }
+    .score-pill {
+      font-size: 13px; font-weight: 600; padding: 6px 16px;
+      border-radius: 20px; border: 1px solid;
+    }
+    .score-pill.block  { background: #EEEDFE; color: #3C3489; border-color: #AFA9EC; }
+    .score-pill.inline { background: #E1F5EE; color: #085041; border-color: #5DCAA5; }
+    .score-pill.ib     { background: #FAECE7; color: #4A1B0C; border-color: #F0997B; }
+
+    footer { text-align: center; font-size: 12px; color: #999; margin-top: 2rem; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <h1>La <span>Ville CSS</span></h1>
+    <p>Construis ta rue et comprends display : <code>block</code>, <code>inline</code> et <code>inline-block</code></p>
+  </header>
+
+  <div class="legend">
+    <div class="leg"><div class="leg-dot" style="background:#534AB7"></div> block — immeuble pleine largeur</div>
+    <div class="leg"><div class="leg-dot" style="background:#0F6E56"></div> inline — kiosque dans le flux</div>
+    <div class="leg"><div class="leg-dot" style="background:#993C1D"></div> inline-block — boutique à taille fixe</div>
+  </div>
+
+  <div class="controls">
+    <button class="btn btn-block"  onclick="addBlock()">+ Immeuble (block)</button>
+    <button class="btn btn-inline" onclick="addInline()">+ Kiosque (inline)</button>
+    <button class="btn btn-ib"    onclick="addIB()">+ Boutique (inline-block)</button>
+    <button class="btn btn-reset" onclick="reset()">Tout effacer</button>
+  </div>
+
+  <div class="scoreboard">
+    <div class="score-pill block"  id="sc-block">block : 0</div>
+    <div class="score-pill inline" id="sc-inline">inline : 0</div>
+    <div class="score-pill ib"     id="sc-ib">inline-block : 0</div>
+  </div>
+
+  <div class="street-card">
+    <div class="sky">
+      <div class="sun"></div>
+      <div class="cloud cloud-1"></div>
+      <div class="cloud cloud-2"></div>
+    </div>
+    <div class="rue" id="rue">
+      <span class="empty-msg" id="empty-msg">Clique sur un bouton pour construire ta rue !</span>
+    </div>
+    <div class="trottoir"></div>
+    <div class="sol-line"></div>
+    <div class="sol"></div>
+  </div>
+
+  <div class="info-panel" id="info-panel">
+    <strong>Bienvenue dans la Ville CSS !</strong><br>
+    Clique sur un bouton pour ajouter un bâtiment. Clique ensuite sur un bâtiment pour comprendre son comportement.
+  </div>
+
+  <div class="code-rule" id="code-rule"></div>
+
+</div>
+
+<script>
+  var items = [];
+  var counts = { block: 0, inline: 0, ib: 0 };
+
+  var blockColors  = ["#534AB7","#7F77DD","#3C3489"];
+  var inlineColors = ["#0F6E56","#1D9E75","#085041"];
+  var ibColors     = ["#993C1D","#D85A30","#712B13"];
+
+  var infos = {
+    block: {
+      cls: 'type-block',
+      html: '<strong style="color:#534AB7">display: block</strong> — L\'immeuble prend <em>toute la largeur de la rue</em>, même s\'il est petit. Le bâtiment suivant doit obligatoirement commencer sur <em>une nouvelle rangée</em>. On peut lui donner une hauteur (<code>height</code>) et des marges de tous les côtés.',
+      rule: '<span class="kw">display</span>: <span class="val">block</span>;   <span class="cmt">/* 100% de largeur, nouvelle ligne obligatoire */</span>'
+    },
+    inline: {
+      cls: 'type-inline',
+      html: '<strong style="color:#0F6E56">display: inline</strong> — Le kiosque se glisse dans le flux <em>sans créer de saut de ligne</em>. Il prend juste la place de son contenu. <em>Tous les kiosques ont la même taille</em> — même si tu écris <code>width: 300px; height: 200px;</code>, ça ne change rien. Le navigateur ignore complètement ces propriétés !',
+      rule: '<span class="kw">display</span>: <span class="val">inline</span>;        <span class="cmt">/* Dans le flux, width/height ignorés */</span>'
+    },
+    ib: {
+      cls: 'type-ib',
+      html: '<strong style="color:#993C1D">display: inline-block</strong> — La boutique s\'aligne <em>côte à côte</em> avec ses voisines (comme inline), mais on peut lui donner une <em>largeur et une hauteur précises</em> (comme block). C\'est le meilleur des deux mondes !',
+      rule: '<span class="kw">display</span>: <span class="val">inline-block</span>;  <span class="cmt">/* Côte à côte + width & height respectés */</span>'
+    }
+  };
+
+  function winRows(n, lit) {
+    var html = '';
+    var rows = Math.max(1, Math.ceil(n / 3));
+    for (var i = 0; i < rows; i++) {
+      html += '<div class="win-row">';
+      var cols = Math.min(n, 3);
+      for (var j = 0; j < cols; j++) {
+        var isLit = (Math.random() > 0.4) ? ' lit' : '';
+        html += '<div class="win' + isLit + '"></div>';
+      }
+      html += '</div>';
+    }
+    return html;
+  }
+
+  function rebuild() {
+    var rue = document.getElementById('rue');
+    if (items.length === 0) {
+      rue.innerHTML = '<span class="empty-msg" id="empty-msg">Clique sur un bouton pour construire ta rue !</span>';
+      document.getElementById('code-rule').classList.remove('show');
+      document.getElementById('info-panel').className = 'info-panel';
+      document.getElementById('info-panel').innerHTML = '<strong>Bienvenue dans la Ville CSS !</strong><br>Clique sur un bouton pour ajouter un bâtiment. Clique ensuite sur un bâtiment pour comprendre son comportement.';
+      return;
+    }
+
+    var html = '';
+    items.forEach(function(item, idx) {
+      var color = '';
+      var cls = '';
+      var h = 0, w = 0;
+
+      if (item.type === 'block') {
+        color = blockColors[counts.block % 3];
+        cls = 'b-block';
+        h = 54 + item.size * 20;
+        html += '<div class="building ' + cls + '" style="height:' + h + 'px;background:' + color + '" onclick="showInfo(\'block\')">'
+          + winRows(item.size + 2, true)
+          + '<span class="bld-label" style="color:rgba(255,255,255,0.8)">block</span>'
+          + '</div>';
+      } else if (item.type === 'inline') {
+        color = inlineColors[counts.inline % 3];
+        cls = 'b-inline';
+        /* Pas de width ni height : display:inline les ignore de toute façon */
+        html += '<span class="building ' + cls + '" style="background:' + color + ';padding:6px 14px;" onclick="showInfo(\'inline\')">'
+          + '<span class="bld-label" style="color:rgba(255,255,255,0.85);font-size:11px">inline</span>'
+          + '</span>';
+      } else {
+        color = ibColors[counts.ib % 3];
+        cls = 'b-ib';
+        h = 46 + item.size * 14;
+        w = 72 + item.size * 16;
+        html += '<span class="building ' + cls + '" style="height:' + h + 'px;width:' + w + 'px;background:' + color + '" onclick="showInfo(\'ib\')">'
+          + winRows(item.size + 1, true)
+          + '<span class="bld-label" style="color:rgba(255,255,255,0.8)">i-block</span>'
+          + '</span>';
+      }
+    });
+
+    rue.innerHTML = html;
+    updateScore();
+  }
+
+  function showInfo(type) {
+    var info = infos[type];
+    var panel = document.getElementById('info-panel');
+    panel.className = 'info-panel ' + info.cls;
+    panel.innerHTML = info.html;
+    var cr = document.getElementById('code-rule');
+    cr.innerHTML = info.rule;
+    cr.classList.add('show');
+  }
+
+  function updateScore() {
+    var c = { block: 0, inline: 0, ib: 0 };
+    items.forEach(function(i) { c[i.type]++; });
+    document.getElementById('sc-block').textContent  = 'block : ' + c.block;
+    document.getElementById('sc-inline').textContent = 'inline : ' + c.inline;
+    document.getElementById('sc-ib').textContent     = 'inline-block : ' + c.ib;
+  }
+
+  function addBlock()  { counts.block++;  items.push({ type: 'block',  size: (items.length % 3) + 1 }); rebuild(); showInfo('block'); }
+  function addInline() { counts.inline++; items.push({ type: 'inline', size: (items.length % 3) + 1 }); rebuild(); showInfo('inline'); }
+  function addIB()     { counts.ib++;     items.push({ type: 'ib',     size: (items.length % 3) + 1 }); rebuild(); showInfo('ib'); }
+  function reset()     { items = []; counts = { block: 0, inline: 0, ib: 0 }; rebuild(); }
+</script>
+
+<footer>Méthode pédagogique "La Ville CSS" — display : block / inline / inline-block</footer>
+</body>
+</html>
